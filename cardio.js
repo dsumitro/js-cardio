@@ -9,7 +9,7 @@
  * @returns {string[]} filtered array
  */
 function filterByLength(people, length) {
-  return people.filter(people => people.length > length);
+  return people.filter(names => names.length > length);
 }
 
 /**
@@ -26,7 +26,7 @@ function filterByLength(people, length) {
  *    // → ['Matt', 'Kanye', 'Hans']
  */
 function everyNPerson(people, n) {
-  if (n === 0) return people;
+  if (n === 0) return people; // should return a copy of the array instead of just the array itself
   return people.filter((people, i) => i % n === 0);
 }
 
@@ -40,10 +40,10 @@ function everyNPerson(people, n) {
  *    // → ['KW', 'BO']
  */
 function initials(people) {
-  return people.map((name, i) => initialHelper(people[i]));
+  return people.map((name, i) => getInitials(people[i]));
 }
 
-function initialHelper(str) {
+function getInitials(str) {
   const newArr = str.split(' '); // ['Kanye', 'West']
   return `${newArr[0].charAt(0)}${newArr[1].charAt(0)}`;
 }
@@ -67,8 +67,14 @@ function peopleWithPosition(people) {
  * @returns {string[]} sorted array
  */
 function sortByFirstName(people) {
+  // Should be none-destructive!!
   const newArr = people.sort();
   return newArr;
+  /** one line return people.concat().sort();
+   * can also spread it but its a shallow copy
+   * does not work with nested objs
+   * return [...people].sort()
+   */
 }
 
 /**
@@ -77,7 +83,19 @@ function sortByFirstName(people) {
  * @returns {string[]} sorted array
  */
 function sortByLastName(people) {
-  const newArr = [];
+  const sortingArr = [...people];
+  return sortingArr.sort((a, b) => {
+    const alastName = a.split(' ')[1];
+    const blastName = b.split(' ')[1];
+    if (alastName > blastName) {
+      return 1;
+    }
+    return -1;
+  });
+
+  /** shorten significantly through this
+   * return [...people].sort((left, right) => left.split(' ')[1] > right.split(' ')[1] ? 1 : -1);
+   */
 }
 
 /**
@@ -97,7 +115,10 @@ function countTotalCharacters(people) {
  * @returns {boolean}
  */
 function everyoneHasLetter(people, letter) {
-  const checker = people.forEach(names => {
+  // solution with knowledge of .every/.some and .includes
+  return people.every(person => person.includes(letter));
+}
+/** const checker = people.forEach(names => {
     let check = true;
     if (!names.includes(letter)) {
       check = false;
@@ -107,7 +128,8 @@ function everyoneHasLetter(people, letter) {
     return check;
   });
   return checker;
-}
+  */
+
 /* function letterHelp(letter, ...str) {
   const newArr = str.split('');
   let checker = false;
@@ -126,7 +148,10 @@ function everyoneHasLetter(people, letter) {
  * @param {string} letter
  * @returns {boolean}
  */
-function someoneHasLetter(people, letter) {}
+function someoneHasLetter(people, letter) {
+  // solution with knowledge of .every/.some and .includes
+  return people.some(person => person.includes(letter));
+}
 
 module.exports = {
   filterByLength,
